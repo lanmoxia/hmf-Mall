@@ -1,0 +1,66 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+            "path" : "pages/resale/resale",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "二手房",
+                "enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+            }
+            
+        }
+        ,{
+            "path" : "pages/rental/rental",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "租赁",
+                "enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+            }
+            
+        }
+        ,{
+            "path" : "pages/profile/profile",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "个人中心",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {},
+	"tabBar": {
+		"color":"#8a8a8a",
+		"selectedColor":"#00aa00",
+		"borderStyle":"black",
+		"backgroundColor":"#ffffff",
+		"list": [
+			{
+				"pagePath": "pages/resale/resale",
+				"iconPath": "static/icons/resale.png",
+				"selectedIconPath": "static/icons/resaled.png",
+				"text": "二手"
+			},
+			{
+				"pagePath": "pages/rental/rental",
+				"iconPath": "static/icons/rental.png",
+				"selectedIconPath": "static/icons/rentald.png",
+				"text": "租赁"
+			},
+			{
+				"pagePath": "pages/profile/profile",
+				"iconPath": "static/icons/profile.png",
+				"selectedIconPath": "static/icons/profiled.png",
+				"text": "我的"
+			}
+		]
+	}
+}
