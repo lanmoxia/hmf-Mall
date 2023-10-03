@@ -13,5 +13,11 @@
 </script>
 
 <style lang="scss">
-@import "@/uni_modules/uview-ui/index.scss";
+	@import "@/uni_modules/uview-ui/index.scss";
+
+	view,
+	text,
+	scroll-view {
+		box-sizing: border-box;
+	}
 </style>

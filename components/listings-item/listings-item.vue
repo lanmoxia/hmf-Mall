@@ -66,11 +66,7 @@
 				.item-title {
 					font-size: 30rpx;
 					font-weight: 600;
-					overflow: hidden;
-					-webkit-line-clamp: 2;
-					text-overflow: ellipsis;
-					display: -webkit-box;
-					-webkit-box-orient: vertical;
+					@include ellipsis(2);
 				}
 
 				.item-sku {
