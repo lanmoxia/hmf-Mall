@@ -53,7 +53,6 @@
 	.custom-head {
 		overflow: hidden;
 		position: relative;
-		margin-bottom: 10rpx;
 		background-image: linear-gradient(to top, #f6f6f6 0%, #aacdf7 100%);
 
 		&.active-bg-olor {

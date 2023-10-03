@@ -1,35 +1,38 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-            "path" : "pages/resale/resale",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "二手房",
-                "enablePullDownRefresh": false,
+			"path": "pages/resale/resale",
+			"style": {
+				"navigationBarTitleText": "二手房",
+				"enablePullDownRefresh": false,
 				"navigationStyle": "custom"
-            }
-            
-        }
-        ,{
-            "path" : "pages/rental/rental",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "租赁",
-                "enablePullDownRefresh": false,
+			}
+
+		}, {
+			"path": "pages/rental/rental",
+			"style": {
+				"navigationBarTitleText": "租赁",
+				"enablePullDownRefresh": false,
 				"navigationStyle": "custom"
-            }
-            
-        }
-        ,{
-            "path" : "pages/profile/profile",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "个人中心",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-    ],
+			}
+
+		}, {
+			"path": "pages/profile/profile",
+			"style": {
+				"navigationBarTitleText": "个人中心",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/search/search",
+			"style": {
+				"navigationBarTitleText": "搜索",
+				"enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#fff"
+			}
+
+		}
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
@@ -38,12 +41,11 @@
 	},
 	"uniIdRouter": {},
 	"tabBar": {
-		"color":"#8a8a8a",
-		"selectedColor":"#00aa00",
-		"borderStyle":"black",
-		"backgroundColor":"#ffffff",
-		"list": [
-			{
+		"color": "#8a8a8a",
+		"selectedColor": "#00aa00",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [{
 				"pagePath": "pages/resale/resale",
 				"iconPath": "static/icons/resale.png",
 				"selectedIconPath": "static/icons/resaled.png",

@@ -1,19 +1,18 @@
 <template>
-	<view class="container">
+	<view class="item-wrapper" @click="showDetail">
 
-		<view class="item-info">
-
+		<view class="item-info" v-for="item in listingsItem" :key="item.id">
 			<view class="item-pic">
-				<image class="img" :src="listingsItem.image" model="aspectFit"></image>
+				<image class="img" :src="item.thumb" model="aspectFit"></image>
 			</view>
 			<view class="item-texts">
-				<view class="item-title">{{listingsItem.title}}</view>
+				<view class="item-title">{{item.name}}</view>
 				<text class="item-sku">
-					{{listingsItem.sku.size }} | {{listingsItem.sku.area}} | {{listingsItem.sku.orientation}}
+					{{item.sku.size }} | {{item.sku.area}} | {{item.sku.orientation}}
 				</text>
 				<view class="price-information">
-					<text class="current-price">{{listingsItem.originalPrice}}</text>
-					<text class="average-price">{{listingsItem.averagePrice}}</text>
+					<text class="current-price">{{item.originalPrice}}</text>
+					<text class="average-price">{{item.averagePrice}}</text>
 				</view>
 			</view>
 		</view>
@@ -24,19 +23,35 @@
 <script>
 	export default {
 		name: "listings-item",
-		data() {
-			return {
-
+		props: {
+			listingsItem: {
+				type: Array,
+				default: () => []
 			}
 		},
-		props: ['listingsItem']
+		data() {
+			return {
+				isDetail: false
+			}
+		},
+		onLoad() {
+			this.showDetail()
+		},
+		methods: {
+			showDetail() {
+				console.log('hi')
+				this.isDetail = true
+			}
+		}
 	}
 </script>
 
 <style lang="scss" scoped>
-	.container {
-		box-sizing: border-box;
-		margin-bottom: 20rpx;
+	.item-wrapper {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+
 
 		.item-info {
 			color: #272526;
@@ -47,6 +62,7 @@
 			width: 340rpx;
 			height: auto;
 			overflow: hidden;
+			margin-bottom: 30rpx;
 
 			.item-pic {
 				width: 340rpx;
@@ -66,6 +82,8 @@
 				.item-title {
 					font-size: 30rpx;
 					font-weight: 600;
+					line-height: 36rpx;
+					color: #1d212a;
 					@include ellipsis(2);
 				}
 
@@ -84,7 +102,7 @@
 					}
 
 					.average-price {
-						color: #a3a1a2;
+						color: #9399a5;
 						font-size: 26rpx;
 					}
 				}

@@ -1,9 +1,8 @@
 <template>
 	<view class="wrapper">
 		<scroll-view class="nav-box" scroll-x>
-			<view class="nav-item" v-for="(item, index) in navlist" :key="item.id"
-				:class="{ 'active': index === selectedIndex }" @tap="selectItem(index)">
-				{{item.name}}
+			<view class="nav-item"  >
+				{{navTitle}}
 			</view>
 		</scroll-view>
 	</view>
@@ -17,7 +16,12 @@
 				selectedIndex: 0
 			}
 		},
-		props: ['navlist'],
+		props: {
+			navTitle: {
+				type: String,
+				require: true
+			}
+		},
 		methods: {
 			selectItem(index) {
 				this.selectedIndex = index
@@ -27,19 +31,19 @@
 </script>
 
 <style lang="scss" scoped>
-	.wrapper {
+	.listings-nav {
 		height: 100%;
 		padding: 0 30rpx;
 		background-color: #f6f6f6;
 		box-shadow: 0px 10px 16px -14px rgba(0, 0, 0, 0.1);
 
-		.nav-box {
+		.scroll-view-nav {
 			display: flex;
 			height: 100%;
 			white-space: nowrap;
 			padding: 40rpx 0 30rpx 0;
 
-			.nav-item {
+			.nav-title {
 				display: inline-block;
 				font-size: 32rpx;
 				font-weight: 600;
