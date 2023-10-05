@@ -21,6 +21,9 @@
 </template>
 
 <script>
+	import {
+		mapMutations
+	} from "vuex"
 	export default {
 		name: "listings-item",
 		props: {
@@ -29,18 +32,10 @@
 				default: () => []
 			}
 		},
-		data() {
-			return {
-				isDetail: false
-			}
-		},
-		onLoad() {
-			this.showDetail()
-		},
 		methods: {
+			...mapMutations(["SET_DETAIL_STATE"]),
 			showDetail() {
-				console.log('hi')
-				this.isDetail = true
+				this.SET_DETAIL_STATE(true)
 			}
 		}
 	}

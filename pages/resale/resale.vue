@@ -10,8 +10,8 @@
 			<view class="container">
 				<view class="search-bar-box" id="search-bar">
 					<navigator class="sear-bar" url="/pages/search/search">
-						<view></view>
-						<text class="placeholder-text">请输入搜索内容</text>
+						<view class="placeholder-tag"></view>
+						<text class="placeholder-text">headBar 位置还有问题</text>
 						<image class="search-icon" src="../../static/icons/search.png"></image>
 					</navigator>
 				</view>
@@ -32,9 +32,10 @@
 				</view>
 
 			</view>
-
 		</scroll-view>
 
+
+		<detail-popup></detail-popup>
 	</view>
 </template>
 
@@ -226,7 +227,6 @@
 		flex-direction: column;
 		background: #f6f6f6;
 		overflow: hidden;
-		z-index: 999;
 
 		.scroll-box {
 			height: 100%;
@@ -268,7 +268,7 @@
 				}
 
 				.search-bar-box {
-					padding-top: 60rpx;
+					padding: 60rpx 0 20rpx 0;
 					display: flex;
 					justify-content: center;
 
@@ -284,7 +284,13 @@
 						align-items: center;
 						justify-content: space-between;
 
+						.placeholder-tag {
+							width: 44rpx;
+							height: 44rpx;
+						}
+
 						.placeholder-text {
+							font-size: 30rpx;
 							color: #969696;
 						}
 

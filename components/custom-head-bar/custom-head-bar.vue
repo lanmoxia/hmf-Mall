@@ -8,43 +8,21 @@
 				<navigator class="title-text">
 					{{headTitle}}
 				</navigator>
-				<view :style="{width: menuBtnWidth + 'px'}"></view>
+				<view class="placeholder-tag"></view>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import {
+		mapGetters
+	} from "vuex"
 	export default {
 		name: "custom-head-bar",
 		props: ['headTitle', 'headLogo', 'isBgColor'],
-		data() {
-			return {
-				statusBarHeight: 0,
-				titleBarHeight: 0,
-				menuBtnWidth: 0
-			}
-		},
-
-		mounted() {
-			// 设备信息
-			let systemInfo = uni.getSystemInfoSync()
-
-			// 状态栏高度
-			this.statusBarHeight = systemInfo.statusBarHeight || 20
-
-			// #ifdef MP-WEIXIN
-			// 胶囊按钮信息
-			let menuBtnInfo = uni.getMenuButtonBoundingClientRect()
-
-			this.menuBtnWidth = menuBtnInfo.width
-			// 胶囊 + 上下空袭高度
-			this.titleBarHeight = menuBtnInfo.height + (menuBtnInfo.top - this.statusBarHeight) * 2
-			// #endif
-
-			// #ifndef MP-WEIXIN
-			this.titleBarHeight = 40
-			// #endif
+		computed: {
+			...mapGetters(["statusBarHeight", "titleBarHeight", "menuWidth"])
 		}
 	}
 </script>
@@ -69,9 +47,17 @@
 			margin-bottom: 20rpx;
 
 			.service {
-				padding-left: 30rpx;
+				padding: 0 30rpx 0 30rpx;
 				@include flex-box-set(between);
 				color: #1d212a;
+
+				.placeholder-tag {
+					width: 52rpx;
+					height: 52rpx;
+					padding: 10rpx;
+					border: 1px solid transparent;
+					border-radius: 50%;
+				}
 
 				.logo-icon {
 					width: 35rpx;

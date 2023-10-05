@@ -1,5 +1,5 @@
 <template>
-	<view class="item-info">
+	<view class="item-info" @tap="showDetail">
 		<view class="item-pic">
 			<image class="img" src="../../static/home1.jpg" model="aspectFill"></image>
 		</view>
@@ -20,15 +20,16 @@
 </template>
 
 <script>
+	import {
+		mapMutations
+	} from "vuex"
 	export default {
 		name: "search-item",
-		data() {
-			return {
-
-			}
-		},
 		methods: {
-
+			...mapMutations(["SET_DETAIL_STATE"]),
+			showDetail() {
+				this.SET_DETAIL_STATE(true)
+			}
 		}
 	}
 </script>

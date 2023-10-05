@@ -24,6 +24,7 @@
 				</u-empty>
 			</view>
 		</view>
+		<detail-popup></detail-popup>
 	</view>
 </template>
 
