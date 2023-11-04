@@ -1,220 +1,154 @@
 <template>
 	<view class="resale-wrapper">
-		<scroll-view class="scroll-box" scroll-y @scroll="handleScroll" scroll-with-animation>
-
-			<u-sticky :customNavHeight="0" :zIndex="2">
-				<custom-head-bar :headLogo="headLogo" :headTitle="headTitle" :isBgColor="isBgColor"
-					id="head-bar"></custom-head-bar>
-			</u-sticky>
+		<u-sticky :customNavHeight="0" :zIndex="2">
+			<custom-head-bar headLogo="../../static/icons/logo1.png" headTitle="买卖房源" :isBgColor="isBgColor"
+				id="head-bar"></custom-head-bar>
+		</u-sticky>
+		<scroll-view class="scroll-box" scroll-y @scroll="handleScroll" scroll-with-animation :enable-back-to-top="true"
+			:refresher-enabled="true" :refresher-triggered="isRefresher" @refresherrefresh="onRefresh"
+			:refresher-threshold="100" @scrolltolower="loadMore" refresher-background="#f6f6f6"
+			refresher-default-style="black">
 
 			<view class="container">
+
 				<view class="search-bar-box" id="search-bar">
-					<navigator class="sear-bar" url="/pages/search/search">
+					<navigator class="sear-bar" url="/pages/search/search?type=resale">
 						<view class="placeholder-tag"></view>
-						<text class="placeholder-text">headBar 位置还有问题</text>
+						<text class="placeholder-text">请输入搜索内容</text>
 						<image class="search-icon" src="../../static/icons/search.png"></image>
 					</navigator>
 				</view>
 
-				<u-sticky v-if="headHeight" :customNavHeight="headHeight" :zIndex="1">
+				<u-sticky :customNavHeight="0" :zIndex="1">
 					<view class="listings-nav">
 						<scroll-view class="scroll-view-nav" scroll-x>
-							<view v-for="(item,index) in itemList" :key="item.id" class="nav-title"
-								:class="{ 'active': index === selectedIndex  }" @tap="selectItem(index)">
-								{{item.name}}
+							<view v-for="item in navList" :key="item._id" class="nav-title"
+								:class="{ 'active': item._id === selectesdId  }" @tap="selectItem(item._id)">
+								{{item.classname}}
 							</view>
 						</scroll-view>
 					</view>
 				</u-sticky>
 
-				<view class="listings-item">
-					<listings-item :listingsItem="itemList[selectedIndex].children"></listings-item>
+				<view v-if="houseList.length <= 0 || isLoading">
+					<view v-if="isLoading">
+						<u-loadmore status="loading" bg-color="#f6f6f6" margin-top="50%" />
+					</view>
+					<view v-else-if="houseList.length <= 0">
+						<u-empty mode="list" marginTop="25%" icon="https://cdn.uviewui.com/uview/empty/search.png"></u-empty>
+					</view>
 				</view>
 
+				<view v-else class="listings-item">
+					<listings-item isResale :resaleHouseList="houseList"></listings-item>
+				</view>
+				<view class="loadmore" v-if="isNomore && !isLoadingMore && houseList.length > 0">
+					<u-loadmore status="nomore" color="rgb(192, 196, 204)" bg-color="#f6f6f6" />
+				</view>
 			</view>
 		</scroll-view>
-
-
-		<detail-popup></detail-popup>
+		<resale-detailpopup></resale-detailpopup>
 	</view>
 </template>
 
 <script>
+	import {
+		mapGetters
+	} from "vuex"
+	import {
+		getResaleNav,
+		getResaleHouseList
+	} from '@/api/request.js'
+	const db = uniCloud.database()
 	export default {
+		name: "resale",
 		data() {
 			return {
-				headHeight: 0,
-				selectedIndex: 0,
-				headLogo: '../../static/icons/logo.png',
-				headTitle: '二手房源',
+				page: 1,
+				size: 6,
+				isNomore: false, // 是否显示没有更多文字
+				isLoadingMore: false, // 是否加载更多
+				hasMoreData: true, // 是否还有更多数据
+				isRefresher: false, // 下拉刷新状态
+				isLoading: true, // 数据加载完成之前的 loading
+				selectesdId: "",
 				isBgColor: false,
-				itemList: [{
-						id: 1,
-						name: "一号院",
-						children: [{
-								id: 11,
-								name: "一号院1 次新小区 地铁2号线 南北通透 双阳台 毛坯大甩卖 毛坯大甩卖",
-								sku: {
-									size: "3室1厅",
-									area: "87.64m²",
-									orientation: "南"
-								},
-								originalPrice: "134万",
-								averagePrice: "15,290元/平",
-								thumb: "../../static/home1.jpg"
-							},
-							{
-								id: 12,
-								name: "一号院2 次新小区 地铁2号线 南北通透 双阳台 毛坯大甩卖 毛坯大甩卖",
-								sku: {
-									size: "3室1厅",
-									area: "87.64m²",
-									orientation: "南"
-								},
-								originalPrice: "134万",
-								averagePrice: "15,290元/平",
-								thumb: "../../static/home1.jpg"
-							},
-							{
-								id: 13,
-								name: "一号院3 次新小区 地铁2号线 南北通透 双阳台 毛坯大甩卖 毛坯大甩卖",
-								sku: {
-									size: "3室1厅",
-									area: "87.64m²",
-									orientation: "南"
-								},
-								originalPrice: "134万",
-								averagePrice: "15,290元/平",
-								thumb: "../../static/home1.jpg"
-							},
-							{
-								id: 14,
-								name: "一号院4 次新小区 地铁2号线 南北通透 双阳台 毛坯大甩卖 毛坯大甩卖",
-								sku: {
-									size: "3室1厅",
-									area: "87.64m²",
-									orientation: "南"
-								},
-								originalPrice: "134万",
-								averagePrice: "15,290元/平",
-								thumb: "../../static/home1.jpg"
-							},
-							{
-								id: 15,
-								name: "一号院5 次新小区 地铁2号线 南北通透 双阳台 毛坯大甩卖 毛坯大甩卖",
-								sku: {
-									size: "3室1厅",
-									area: "87.64m²",
-									orientation: "南"
-								},
-								originalPrice: "134万",
-								averagePrice: "15,290元/平",
-								thumb: "../../static/home1.jpg"
-							},
-							{
-								id: 16,
-								name: "一号院6 次新小区 地铁2号线 南北通透 双阳台 毛坯大甩卖 毛坯大甩卖",
-								sku: {
-									size: "3室1厅",
-									area: "87.64m²",
-									orientation: "南"
-								},
-								originalPrice: "134万",
-								averagePrice: "15,290元/平",
-								thumb: "../../static/home1.jpg"
-							}
-						]
-					},
-					{
-						id: 2,
-						name: "二号院",
-						children: [{
-								id: 21,
-								name: "二号院1 次新小区 地铁2号线 南北通透 双阳台 毛坯大甩卖 毛坯大甩卖",
-								sku: {
-									size: "3室1厅",
-									area: "87.64m²",
-									orientation: "南"
-								},
-								originalPrice: "134万",
-								averagePrice: "15,290元/平",
-								thumb: "../../static/home2.jpg"
-							},
-							{
-								id: 22,
-								name: "二号院2 次新小区 地铁2号线 南北通透 双阳台 毛坯大甩卖 毛坯大甩卖",
-								sku: {
-									size: "3室1厅",
-									area: "87.64m²",
-									orientation: "南"
-								},
-								originalPrice: "134万",
-								averagePrice: "15,290元/平",
-								thumb: "../../static/home2.jpg"
-							}
-						]
-					},
-					{
-						id: 3,
-						name: "三号院",
-						children: [{
-							id: 31,
-							name: "三号院1 次新小区 地铁2号线 南北通透 双阳台 毛坯大甩卖 毛坯大甩卖",
-							sku: {
-								size: "3室1厅",
-								area: "87.64m²",
-								orientation: "南"
-							},
-							originalPrice: "134万",
-							averagePrice: "15,290元/平",
-							thumb: "../../static/home3.jpg",
-						}]
-					},
-					{
-						id: 4,
-						name: "四号院"
-					},
-					{
-						id: 5,
-						name: "五号院"
-					},
-					{
-						id: 6,
-						name: "六号院"
-					},
-					{
-						id: 7,
-						name: "七号院"
-					}
-				]
+				navList: [],
+				houseList: []
 			}
 		},
 		onLoad() {
-			this.$nextTick(() => {
-				setTimeout(() => {
-					this.getHeight()
-				}, 100)
-			})
+			this.getNav()
+		},
+		watch: {
+			selectesdId(newVal, oldVal) {
+				this.getList(newVal)
+			}
 		},
 		methods: {
+			// 上拉加载更多数据
+			async loadMore() {
+				uni.showLoading({
+					title: '加载中'
+				})
 
-			getHeight() {
-				uni.createSelectorQuery().in(this)
-					.select("#head-bar")
-					.boundingClientRect(rect => {
-						this.headHeight = rect.height
-					}).exec()
+				if (!this.hasMoreData || this.isLoadingMore) {
+					return uni.hideLoading()
+				}
+				this.isLoadingMore = true
+				this.hasMoreData = true
+				this.page++
+				try {
+					let res = await getResaleHouseList(this.selectesdId, this.page)
+					if (res.data.length > 0) {
+						this.houseList = this.houseList.concat(res.data)
+					} else {
+						this.hasMoreData = false
+						this.isLoadingMore = false
+					}
+				} catch (error) {
+					console.error(error)
+				}
+				uni.hideLoading()
+				this.isLoadingMore = false
+				this.isNomore = true
 			},
-
-			selectItem(index) {
-				this.selectedIndex = index
+			// 触发下拉刷新
+			async onRefresh() {
+				if (this.isRefresher) return
+				this.isRefresher = true
+				this.page = 1
+				await this.getNav()
+				this.getList(this.selectesdId)
+				this.isRefresher = false
+				this.hasMoreData = true
 			},
+			//请求导航列表
+			async getNav() {
+				let res = await getResaleNav()
+				this.navList = res.data
+				this.selectesdId = this.selectesdId == '' ? this.navList[0]._id : this.selectesdId
+			},
+			// 请求房源列表
+			async getList(navid) {
+				if (this.isNomore) {
+					this.isNomore = false
+				}
+				this.isLoading = true
+				let res = await getResaleHouseList(navid)
+				this.houseList = res.data
+				this.isLoading = false
+			},
+			// 导航 tabs 切换状态
+			selectItem(id) {
+				this.selectesdId = id
+				this.page = 1
+				this.hasMoreData = true
+			},
+			//页面滚动改变 navBar 背景色
 			handleScroll(e) {
 				const scrollTop = e.detail.scrollTop
 				scrollTop > 20 ? this.isBgColor = true : this.isBgColor = false
-			},
-			click(item) {
-				console.log('item', item)
 			}
 		}
 	}
@@ -222,23 +156,24 @@
 
 <style lang="scss" scoped>
 	.resale-wrapper {
-		height: 100vh;
 		display: flex;
 		flex-direction: column;
 		background: #f6f6f6;
+		height: 100vh;
 		overflow: hidden;
 
 		.scroll-box {
 			height: 100%;
+			white-space: nowrap;
+			overflow: hidden;
 
 			.container {
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
-				padding: 0 30rpx;
+				padding: 0 30rpx 30rpx 30rpx;
 
 				.listings-nav {
-					height: 100%;
 					background-color: #f6f6f6;
 					box-shadow: 0px 10px 16px -14px rgba(0, 0, 0, 0.1);
 					margin-bottom: 30rpx;

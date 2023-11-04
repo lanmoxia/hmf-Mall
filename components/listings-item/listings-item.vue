@@ -1,18 +1,61 @@
 <template>
-	<view class="item-wrapper" @click="showDetail">
+	<view>
+		<view class="item-wrapper">
 
-		<view class="item-info" v-for="item in listingsItem" :key="item.id">
-			<view class="item-pic">
-				<image class="img" :src="item.thumb" model="aspectFit"></image>
-			</view>
-			<view class="item-texts">
-				<view class="item-title">{{item.name}}</view>
-				<text class="item-sku">
-					{{item.sku.size }} | {{item.sku.area}} | {{item.sku.orientation}}
-				</text>
-				<view class="price-information">
-					<text class="current-price">{{item.originalPrice}}</text>
-					<text class="average-price">{{item.averagePrice}}</text>
+			<view class="item-info" @click="showDetail(item._id)" v-for="item in houseList" :key="item._id">
+				<view class="item-pic">
+					<image class="img" :src="item.picpath[0]" model="aspectFit"></image>
+				</view>
+
+				<view v-if="isResale" class="item-texts">
+					<view class="item-title">{{item.house_name}}</view>
+					<text v-if="item.orientation === null" class="item-sku">
+						{{sliceStr(item.house_types)}} | {{item.area}}m² | {{item.floor}}层
+					</text>
+					<text v-else class="item-sku">
+						{{sliceStr(sliceStr(item.house_types))}} | {{item.area}}m² | {{mapText(item.orientation, "orientation")}}
+					</text>
+					<view class="price-information">
+						<view class="current-price">{{item.total}}万</view>
+						<block v-if="parseInt(item.total) !== parseInt(item.original_rent)">
+							<uni-icons v-if="parseInt(item.total) < parseInt(item.original_rent)" type="arrow-up" size="18"
+								color="#d53c3c"></uni-icons>
+							<uni-icons v-else-if="item.original_rent" type="arrow-down" size="18" color="#03a66d"></uni-icons>
+						</block>
+						<view v-if="item.original_rent && parseInt(item.total) !== parseInt(item.original_rent)"
+							class="average-price">
+							{{item.original_rent}}
+						</view>
+						<view v-else class="average-price">价格平稳</view>
+						<view class="average-price dian">•</view>
+						<view class="average-price">{{mapText(item.key, "key")}}</view>
+					</view>
+				</view>
+
+
+				<view v-else class="item-texts">
+					<view class="item-title">{{item.house_name}}</view>
+					<text v-if="item.orientation === null" class="item-sku">
+						{{sliceStr(item.house_types)}} | {{item.area}}m² | {{item.floor}}层
+					</text>
+					<text v-else class="item-sku">
+						{{sliceStr(sliceStr(item.house_types))}} | {{item.area}}m² | {{mapText(item.orientation, "orientation")}}
+					</text>
+					<view class="price-information">
+						<view class="current-price">{{item.rent}}</view>
+						<block v-if="parseInt(item.rent) !== parseInt(item.original_rent)">
+							<uni-icons v-if="parseInt(item.rent) < parseInt(item.original_rent)" type="arrow-up" size="18"
+								color="#d53c3c"></uni-icons>
+							<uni-icons v-else-if="item.original_rent" type="arrow-down" size="18" color="#03a66d"></uni-icons>
+						</block>
+						<view v-if="item.original_rent && parseInt(item.rent) !== parseInt(item.original_rent)"
+							class="average-price">
+							{{item.original_rent}}
+						</view>
+						<view v-else class="average-price">价格平稳</view>
+						<view class="average-price dian">•</view>
+						<view class="average-price">{{mapText(item.key, "key")}}</view>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -22,20 +65,66 @@
 
 <script>
 	import {
-		mapMutations
+		mapMutations,
+		mapActions
 	} from "vuex"
+	import {
+		mapText
+	} from "@/utils/mapper.js"
+
 	export default {
 		name: "listings-item",
 		props: {
-			listingsItem: {
+			retalHouseList: {
 				type: Array,
 				default: () => []
+			},
+			resaleHouseList: {
+				type: Array,
+				default: () => []
+			},
+			isResale: {
+				type: Boolean,
+				default: false
+			}
+		},
+		computed: {
+			houseList() {
+				if (this.isResale) {
+					return this.resaleHouseList
+				} else {
+					return this.retalHouseList
+				}
 			}
 		},
 		methods: {
+			sliceStr(str) {
+				return str.slice(0, 4)
+			},
+			...mapActions(['getRentalDetailList', 'getResaleDetailList']),
+			mapText(value, attribute) {
+				return mapText(value, attribute)
+			},
 			...mapMutations(["SET_DETAIL_STATE"]),
-			showDetail() {
-				this.SET_DETAIL_STATE(true)
+			showDetail(id) {
+				console.log(id)
+				if (this.isResale) {
+					this.getResaleDetailList(id)
+						.then(() => {
+							this.SET_DETAIL_STATE(true);
+						})
+						.catch(error => {
+							console.error('Error:', error);
+						});
+				} else {
+					this.getRentalDetailList(id)
+						.then(() => {
+							this.SET_DETAIL_STATE(true);
+						})
+						.catch(error => {
+							console.error('Error:', error);
+						});
+				}
 			}
 		}
 	}
@@ -46,7 +135,6 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-between;
-
 
 		.item-info {
 			color: #272526;
@@ -79,7 +167,9 @@
 					font-weight: 600;
 					line-height: 36rpx;
 					color: #1d212a;
-					@include ellipsis(2);
+					text-overflow: -o-ellipsis-lastline;
+					overflow: hidden;
+					text-overflow: ellipsis;
 				}
 
 				.item-sku {
@@ -88,17 +178,23 @@
 
 				.price-information {
 					margin-top: 10rpx;
+					display: flex;
+					align-items: center;
 
 					.current-price {
-						font-size: 28rpx;
+						font-size: 32rpx;
 						font-weight: 600;
 						color: #d53c3c;
-						margin-right: 10rpx;
+						margin-right: 18rpx;
 					}
 
 					.average-price {
 						color: #9399a5;
 						font-size: 26rpx;
+
+						&.dian {
+							margin: 0 10rpx;
+						}
 					}
 				}
 			}

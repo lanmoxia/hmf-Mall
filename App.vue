@@ -2,6 +2,7 @@
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
+			const result = uni.getSystemInfoSync()
 		},
 		onShow: function() {
 			console.log('App Show')
@@ -14,10 +15,10 @@
 
 <style lang="scss">
 	@import "@/uni_modules/uview-ui/index.scss";
+	@import '@/static/fonts/iconfont.css';
 
 	view,
-	text,
-	scroll-view {
+	text {
 		box-sizing: border-box;
 	}
 </style>

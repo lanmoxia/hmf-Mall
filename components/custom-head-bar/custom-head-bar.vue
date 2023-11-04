@@ -1,6 +1,5 @@
 <template>
-	<view class="custom-head" :class="{'active-bg-olor': isBgColor}"
-		:style="{height: (statusBarHeight + titleBarHeight) + 'px'}">
+	<view class="custom-head" :style="{height: (statusBarHeight + titleBarHeight) + 'px'}">
 		<view class="container">
 			<view class="status-bar" :style="{height: statusBarHeight + 'px'}"></view>
 			<view class="service" :style="{height: titleBarHeight + 'px'}">
@@ -60,9 +59,9 @@
 				}
 
 				.logo-icon {
-					width: 35rpx;
-					height: 35rpx;
-					padding: 10rpx;
+					width: 40rpx;
+					height: 40rpx;
+					padding: 6rpx;
 					border: 1px solid #1d212a;
 					border-radius: 50%;
 				}

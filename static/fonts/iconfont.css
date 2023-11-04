@@ -1,0 +1,155 @@
+@font-face {
+	font-family: "iconfont";
+	/* Project id 4254718 */
+	src: url('@/static/fonts/iconfont.woff2?t=1698930133771') format('woff2'),
+		url('@/static/fonts/iconfont.woff?t=1698930133771') format('woff'),
+		url('@/static/fonts/iconfont.ttf?t=1698930133771') format('truetype');
+}
+
+.iconfont {
+	font-family: "iconfont" !important;
+	font-size: 16px;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-duigou:before {
+	content: "\e63b";
+}
+
+.icon-chahao1:before {
+	content: "\e619";
+}
+
+.icon-chacha:before {
+	content: "\e610";
+}
+
+.icon-duihao:before {
+	content: "\e6c6";
+}
+
+.icon-duihao1:before {
+	content: "\eaf1";
+}
+
+.icon-chahao:before {
+	content: "\e663";
+}
+
+.icon-cha:before {
+	content: "\e61c";
+}
+
+.icon-cha1:before {
+	content: "\e75c";
+}
+
+.icon-meiqitianranqi:before {
+	content: "\e60f";
+}
+
+.icon-dianshi:before {
+	content: "\e680";
+}
+
+.icon-bingxiang:before {
+	content: "\e90b";
+}
+
+.icon-nuanqi:before {
+	content: "\e90d";
+}
+
+.icon-xiyiji:before {
+	content: "\e90e";
+}
+
+.icon-kongtiao:before {
+	content: "\e60c";
+}
+
+.icon-yigui:before {
+	content: "\e60d";
+}
+
+.icon-chuang:before {
+	content: "\e643";
+}
+
+.icon-reshuiqi:before {
+	content: "\e66e";
+}
+
+.icon-gerenzhongxin-xuanzhong:before {
+	content: "\e606";
+}
+
+.icon-haofangtuo400iconfontershoufang:before {
+	content: "\e676";
+}
+
+.icon-ershoufang:before {
+	content: "\e603";
+}
+
+.icon-zufang:before {
+	content: "\e605";
+}
+
+.icon-zufang1:before {
+	content: "\e60e";
+}
+
+.icon-zhuye:before {
+	content: "\e600";
+}
+
+.icon-a-2fuwu-zulinzixun:before {
+	content: "\e727";
+}
+
+.icon-zufang2:before {
+	content: "\100e7";
+}
+
+.icon-fangchandiya:before {
+	content: "\100e8";
+}
+
+.icon-ershoufang1:before {
+	content: "\e874";
+}
+
+.icon-tubiaofuben86:before {
+	content: "\e6a5";
+}
+
+.icon-stock:before {
+	content: "\e658";
+}
+
+.icon-interfaceleftmenuresold:before {
+	content: "\e6d5";
+}
+
+.icon-chicang:before {
+	content: "\e75e";
+}
+
+.icon-keshigangweifenzu:before {
+	content: "\e726";
+}
+
+.icon-fangwuzulin:before {
+	content: "\e61f";
+}
+
+.icon-bangongzulin:before {
+	content: "\e746";
+}
+
+.icon-zulinguanli:before {
+	content: "\e74b";
+}

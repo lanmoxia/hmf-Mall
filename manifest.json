@@ -1,6 +1,6 @@
 {
     "name" : "hmfMall",
-    "appid" : "__UNI__E834C07",
+    "appid" : "__UNI__E6AB890",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -52,7 +52,9 @@
     "mp-weixin" : {
         "appid" : "wx871891cd2dcfb2ca",
         "setting" : {
-            "urlCheck" : false
+            "urlCheck" : false,
+            "minified" : true,
+            "postcss" : false
         },
         "usingComponents" : true
     },
