@@ -93,7 +93,7 @@
 					title: '加载中'
 				})
 
-				console.log(!this.hasMoreData)
+				// console.log(!this.hasMoreData)
 				if (!this.hasMoreData || this.isLoadingMore) {
 					return uni.hideLoading()
 				}

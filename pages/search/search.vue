@@ -1,30 +1,23 @@
 <template>
 	<view>
 		<view class="search-wrapper">
-
-			<u-search placeholder="请输入搜索内容" v-model="keyword" clearabled showAction actionText="搜索" animation
-				@search="onSearch" @custom="onSearch" @clear="onClear" :height="35">
+			<u-search class="search-bar" placeholder="请输入搜索内容" v-model="keyword" clearabled showAction actionText="搜索"
+				animation @change="onChange" @search="onSearch" @custom="onSearch" @clear="onClear" :height="35">
 			</u-search>
 			<!-- 搜索历史 -->
-			<!-- <view class="search-history" v-if="listingsList.length <= 0 && keyword === ''">
-				<view class="history-item" v-for="(item,index) in historyList" :key="item._id">
-					<u-tag @click="clickHitText(item)" @close="onClose(index)" :text="item" size="large" closable
-						bgColor="#f6f6f6" borderColor="#f6f6f6" color="#606b82"></u-tag>
-				</view>
-			</view> -->
 			<template v-if="listingsList.length <= 0 && keyword === ''">
 				<!-- 租赁房源搜索历史 -->
 				<view class="search-history" v-if="listingType === 'rental' && rentalHistoryList.length > 0">
 					<view class="history-item" v-for="(item, index) in rentalHistoryList" :key="index">
-						<u-tag @click="clickHitText(item)" @close="onClose(index, 'rental')" :text="item" size="large" closable
-							bgColor="#f6f6f6" borderColor="#f6f6f6" color="#606b82"></u-tag>
+						<u-tag @click="clickHitText(item)" @close="onClearHistory(index, 'rental')" :text="item.keyword"
+							size="large" closable bgColor="#f6f6f6" borderColor="#f6f6f6" color="#606b82"></u-tag>
 					</view>
 				</view>
 				<!-- 买卖房源搜索历史 -->
 				<view class="search-history" v-if="listingType === 'resale' && resaleHistoryList.length > 0">
 					<view class="history-item" v-for="(item, index) in resaleHistoryList" :key="index">
-						<u-tag @click="clickHitText(item)" @close="onClose(index, 'resale')" :text="item" size="large" closable
-							bgColor="#f6f6f6" borderColor="#f6f6f6" color="#606b82"></u-tag>
+						<u-tag @click="clickHitText(item)" @close="onClearHistory(index, 'resale')" :text="item.keyword"
+							size="large" closable bgColor="#f6f6f6" borderColor="#f6f6f6" color="#606b82"></u-tag>
 					</view>
 				</view>
 			</template>
@@ -47,7 +40,7 @@
 						<u-loadmore status="loading" bg-color="#fff" margin-top="50%" />
 					</view>
 
-					<view v-else-if="keyword !== '' && isSearched && !isLoading">
+					<view v-else-if="isSearched && keyword !== '' && !isLoading || isEmpty">
 						<u-empty mode="search" marginTop="50%" icon="https://cdn.uviewui.com/uview/empty/search.png"></u-empty>
 					</view>
 				</block>
@@ -81,7 +74,6 @@
 				isLoadingMore: false, // 是否加载更多
 				hasMoreData: true, // 是否还有更多数据
 				keyword: "",
-				historyList: [],
 				rentalHistoryList: [], // 租赁房源搜索历史记录
 				resaleHistoryList: [], // 买卖房源搜索历史记录
 				isEmpty: false,
@@ -96,9 +88,10 @@
 			} else if (options.type === "resale") {
 				this.listingType = "resale"
 			}
-			let history = uni.getStorageSync("historyList") || []
-			this.rentalHistoryList = history.filter(item => item.type === "rental").map(item => item.keyword)
-			this.resaleHistoryList = history.filter(item => item.type === "resale").map(item => item.keyword)
+		},
+		onShow() {
+			this.rentalHistoryList = uni.getStorageSync("rentalHistoryList") || []
+			this.resaleHistoryList = uni.getStorageSync("resaleHistoryList") || []
 		},
 		onReachBottom() {
 			if (this.listingsList.length > 0) {
@@ -106,6 +99,12 @@
 			}
 		},
 		methods: {
+			onChange(e) {
+				if (this.isSearched && this.isEmpty) {
+					this.isSearched = false
+					this.isEmpty = false
+				}
+			},
 			// 上拉加载更多数据
 			async loadMore() {
 				uni.showLoading({
@@ -123,7 +122,7 @@
 					}
 					if (res.data.length >= 0) {
 						this.listingsList = this.listingsList.concat(res.data)
-						console.log('lodMore', this.listingsList)
+						// console.log('lodMore', this.listingsList)
 					} else {
 						this.hasMoreData = false
 						this.isLoadingMore = false
@@ -142,44 +141,60 @@
 			async getList() {
 				this.isLoading = true
 				let res
+				const trimmedKeyword = this.keyword.trim()
+				if (trimmedKeyword === '') {
+					this.isLoading = false
+					this.isEmpty = false
+					this.isSearched = false
+					return
+				}
 				if (this.listingType === "rental") {
 					res = await getRetalSearchList(this.keyword)
 				} else if (this.listingType === "resale") {
-					res = await getResaleSearchList(this.keyword);
+					res = await getResaleSearchList(this.keyword)
 				}
 				this.listingsList = res.data
-				console.log('search', this.listingsList)
+				// console.log('search', this.listingsList)
 				this.isLoading = false
+				this.isEmpty = this.listingsList.length === 0;
 			},
 			//搜索事件
 			onSearch() {
-				const historyList = uni.getStorageSync("historyList") || []
+				this.rentalHistoryList = uni.getStorageSync("rentalHistoryList") || [];
+				this.resaleHistoryList = uni.getStorageSync("resaleHistoryList") || [];
 				const historyItem = {
 					type: this.listingType,
 					keyword: this.keyword
+				};
+				let updatedList;
+				if (this.listingType === "rental") {
+					const filteredList = this.rentalHistoryList.filter(item => item.keyword !== this.keyword);
+					updatedList = [historyItem, ...filteredList];
+					uni.setStorageSync("rentalHistoryList", updatedList);
+				} else if (this.listingType === "resale") {
+					const filteredList = this.resaleHistoryList.filter(item => item.keyword !== this.keyword);
+					updatedList = [historyItem, ...filteredList];
+					uni.setStorageSync("resaleHistoryList", updatedList);
 				}
-				const filteredList = historyList.filter(item => item.keyword !== this.keyword || item.type !== this.listingType)
-				const updatedList = [historyItem, ...filteredList]
-				uni.setStorageSync("historyList", updatedList)
-				this.hasMoreData = true
-				this.isSearched = true
-				this.getList()
+				this.hasMoreData = true;
+				this.isSearched = true;
+				this.getList();
 			},
 			//删除历史
-			onClose(index, type) {
-				const historyList = uni.getStorageSync("historyList") || []
-				const filteredList = historyList.filter(item => item.keyword !== this.historyList[index] || item.type !== type)
-				uni.setStorageSync("historyList", filteredList)
+			onClearHistory(index, type) {
 				if (type === "rental") {
 					this.rentalHistoryList.splice(index, 1)
+					uni.setStorageSync("rentalHistoryList", this.rentalHistoryList)
+
 				} else if (type === "resale") {
 					this.resaleHistoryList.splice(index, 1)
+					uni.setStorageSync("resaleHistoryList", this.resaleHistoryList)
 				}
 			},
 			//点击搜索历史的文字
-			clickHitText(value) {
-				this.keyword = value;
-				this.getList();
+			clickHitText(History) {
+				this.keyword = History.keyword
+				this.getList()
 			},
 			//清空搜索框
 			onClear() {
@@ -195,6 +210,31 @@
 		height: 100vh;
 		padding: 30rpx;
 		padding-bottom: 150rpx;
+		position: relative;
+
+		.validator-search-text {
+			font-size: 20rpx;
+			color: red;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+
+		.validator-search-text {
+			font-size: 20rpx;
+			color: red;
+			position: absolute;
+			left: 0;
+			right: 0;
+		}
+
+		.search-bar {
+			/deep/.uni-input-placeholder .u-search__content__input--placeholder {
+				color: red;
+			}
+		}
 
 		.loadmore {
 			padding-bottom: 15rpx;

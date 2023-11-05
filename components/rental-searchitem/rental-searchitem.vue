@@ -1,5 +1,5 @@
 <template>
-	<view class="item-info" @tap="showDetail">
+	<view class="item-info" @tap="showDetail(searchItem._id)">
 
 		<view class="item-pic">
 			<image class="img" :src="searchItem.picpath[0]" model="aspectFill"></image>
@@ -33,7 +33,8 @@
 
 <script>
 	import {
-		mapMutations
+		mapMutations,
+		mapActions
 	} from "vuex"
 	import {
 		mapText
@@ -51,9 +52,15 @@
 			mapText(value, attribute) {
 				return mapText(value, attribute)
 			},
+			...mapActions(['getRentalDetailList']),
 			...mapMutations(["SET_DETAIL_STATE"]),
-			showDetail() {
-				this.SET_DETAIL_STATE(true)
+			showDetail(id) {
+				this.getRentalDetailList(id)
+					.then(() => {
+						this.SET_DETAIL_STATE(true)
+					}).catch(error => {
+						console.error('Error:', error)
+					})
 			}
 		}
 	}
